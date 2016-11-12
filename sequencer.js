@@ -69,7 +69,7 @@ function playClap() {
 
 // micro recorder
 
-var recordedSource;
+var recordedBuffer;
 function record() {
 	navigator.getUserMedia({ audio: true }, function(stream) {
 		recordStream = stream;
@@ -80,21 +80,26 @@ function record() {
 		window.setTimeout(function() {
 			rec.stop();
 			rec.getBuffer(function(buffers) {
-				var recordedSource = context.createBufferSource();
-			    var newBuffer = context.createBuffer( 2, buffers[0].length, context.sampleRate );
-			    newBuffer.getChannelData(0).set(buffers[0]);
-			    newBuffer.getChannelData(1).set(buffers[1]);
-			    recordedSource.buffer = newBuffer;
-
-			    recordedSource.connect( context.destination );
-			    recordedSource.start(0);
+			    recordedBuffer = context.createBuffer( 2, buffers[0].length, context.sampleRate );
+			    recordedBuffer.getChannelData(0).set(buffers[0]);
+			    recordedBuffer.getChannelData(1).set(buffers[1]);
+			    playRecorded();
 			});
-		}, 1000);
+		}, $('[data-record-duration]').val());
 	}, function() {
 		console.log('recording error');
 	})
 }
-record();
+function playRecorded() {
+	var recordedSource = context.createBufferSource();
+    recordedSource.buffer = recordedBuffer;
+
+    recordedSource.connect( context.destination );
+    recordedSource.start(0);	
+}
+$('[data-record-start]').on('click', function() {
+	record();
+});
 
 
 //Sequencer
@@ -109,7 +114,6 @@ function sequence() {
 
 	var bpm = $('[data-bpm]').val();
 
-	console.log($('[data-osc] [data-sample-' + tact + '-' + beat + ']').is(':checked'));
 	// freq track
 	if($('[data-osc] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
 		playOsc($('[data-osc-freq]').val(), $('[data-osc-wavetype]').val());
@@ -117,6 +121,10 @@ function sequence() {
 	// clap track
 	if($('[data-clap] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
 		playClap();
+
+	// recorded track
+	if($('[data-record] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
+		playRecorded();
 	
 	beat++;
 	if(beat > 4) {
