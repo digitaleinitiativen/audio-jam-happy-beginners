@@ -69,7 +69,7 @@ function playClap() {
 
 // micro recorder
 
-var recordedSource:
+var recordedSource;
 function record() {
 	navigator.getUserMedia({ audio: true }, function(stream) {
 		recordStream = stream;
