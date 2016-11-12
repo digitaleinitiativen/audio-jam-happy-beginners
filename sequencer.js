@@ -36,11 +36,28 @@ function playOsc(frequency, waveType) {
 
 
 var sequenceTimeout;
+var tact = 1;
+var beat = 1;
 
 //Sequencer
 function sequence() {
+	$('.currentBeat').removeClass('currentBeat');
+	$('[data-beattop-' + tact + '-' + beat + ']').addClass('currentBeat');
+
 	var bpm = $('[data-bpm]').val();
-	playOsc($('[data-osc-freq]').val(), $('[data-osc-wavetype]').val());
+
+	if($('[data-sample-' + tact + '-' + beat + ']').is(':checked'))
+		playOsc($('[data-osc-freq]').val(), $('[data-osc-wavetype]').val());
+	
+	beat++;
+	if(beat > 4) {
+		beat = 1;
+		tact++;
+	}
+	if(tact > 4) {
+		tact = 1;
+	}
+
 	sequenceTimeout = window.setTimeout(sequence, 60 / bpm * 1000);
 }
 
