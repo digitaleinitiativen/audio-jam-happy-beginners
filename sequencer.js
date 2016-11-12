@@ -6,53 +6,56 @@ var gain = context.createGain();
 osc.connect(gain);
 gain.connect(context.destination);
 
-osc.detune.value = 100;
-
 osc.type = "square";
 
-var oscTypes = ["sine", "square", "sawtooth", "triangle"];
+var attackTime = 0.1;
+var sustainTime = 0.1;
+var decayTime = 0;
+var releaseTime = 0.1;
 
-var frequenceStart = 200;
-var frequenceStep = 100;
-var frequenceCurrent = frequenceStart;
-
-var attackTime = 0.25;
-var sustainTime = 0.25;
-var decayTime = 0.25;
-var releaseTime = 0.25;
-
-window.setInterval(function() {
+function playOsc(frequency, waveType) {
 	var now = context.currentTime;
-
 	gain.gain.cancelScheduledValues(now);
-
 	gain.gain.setValueAtTime(0, now);
 
 	//attack
 	gain.gain.linearRampToValueAtTime(0.8, now + attackTime);
-
 	//decay
 	gain.gain.linearRampToValueAtTime(1, now + attackTime + decayTime);
-
 	//sustain
 	gain.gain.linearRampToValueAtTime(1, now + attackTime + decayTime + sustainTime);
-
 	//release
 	gain.gain.linearRampToValueAtTime(0, now + attackTime + decayTime + sustainTime + releaseTime);
 
-	osc.frequency.value = frequenceCurrent;
+	osc.frequency.value = frequency;
 
-	osc.type = oscTypes[Math.floor(Math.random() * (oscTypes.length - 0.0000000001))];
+	osc.type = waveType;
 
-	if(osc.detune.value == 100)
-		osc.detune.value = 0;
-	else
-		osc.detune.value = 100;
-
-	frequenceCurrent += frequenceStep;
-	console.log(osc.frequency.value, osc.type, osc.detune.value);
-	if(frequenceCurrent == 1000) frequenceCurrent = frequenceStart;
-}, 1200);
+	console.log(osc.frequency.value, osc.type);
+}
 
 
-osc.start(0);
+var sequenceTimeout;
+
+//Sequencer
+function sequence() {
+	var bpm = $('[data-bpm]').val();
+	playOsc($('[data-osc-freq]').val(), $('[data-osc-wavetype]').val());
+	sequenceTimeout = window.setTimeout(sequence, 60 / bpm * 1000);
+}
+
+$('[data-start]').on('click', function() {
+	sequence();
+	osc.start(0);
+});
+
+$('[data-stop]').on('click', function() {
+	osc.stop();
+	window.clearTimeout(sequenceTimeout);
+});
+
+
+
+
+
+
