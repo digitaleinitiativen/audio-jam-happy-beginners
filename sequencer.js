@@ -1,3 +1,8 @@
+navigator.getUserMedia = (navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia);
+
 var context = new AudioContext();
 
 var osc = context.createOscillator();
@@ -60,6 +65,37 @@ function playClap() {
 	source.buffer = clapBuffer;
 	source.start(0);
 }
+
+
+// micro recorder
+
+var recordedSource:
+function record() {
+	navigator.getUserMedia({ audio: true }, function(stream) {
+		recordStream = stream;
+		console.log('recording');
+		var input = context.createMediaStreamSource(stream);
+		var rec = new Recorder(input);
+		rec.record();
+		window.setTimeout(function() {
+			rec.stop();
+			rec.getBuffer(function(buffers) {
+				var recordedSource = context.createBufferSource();
+			    var newBuffer = context.createBuffer( 2, buffers[0].length, context.sampleRate );
+			    newBuffer.getChannelData(0).set(buffers[0]);
+			    newBuffer.getChannelData(1).set(buffers[1]);
+			    recordedSource.buffer = newBuffer;
+
+			    newSource.connect( context.destination );
+			    newSource.start(0);
+			});
+		}, 1000);
+	}, function() {
+		console.log('recording error');
+	})
+}
+record();
+
 
 //Sequencer
 
