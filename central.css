@@ -1,0 +1,71 @@
+/* ==========
+Zentrales Stylesheet - wird im <head> der Webseiten eingebunden
+Datei: zentrale.css
+Datum: 03/2015
+Autor: Cornelia
+========== */
+
+/* Hier werden später weitere Stylesheets eingebunden */
+
+@media all {
+
+/* ==========
+TEIL 1 - Reset
+========== */
+
+html { overflow-y: scroll; }
+
+body, div,
+h1, h2, h3, h4, h5, h6,
+p, blockquote, pre, code,
+ul, ol, li,
+table, th, td,
+form, fieldset, legend, input, textarea {
+    padding: 0; margin: 0;
+}
+
+body {
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+
+
+/* ==========
+TEIL 2 - Abstände restaurieren
+========== */
+
+h2, h3, h4, h5, h6,
+p, blockquote, pre,
+ul, ol {
+    margin-bottom: 1em;
+}
+ul, ol { margin-left: 2em; }
+ul ul, ul ol, ol ol, ol ul { margin-bottom: 0; }
+blockquote { margin: 1em 2em; }
+
+
+
+/* ==========
+TEIL 3 - Allgemeine Klassen
+========== */
+
+.clearing { clear: both; }
+
+} /* Ende @media - nicht löschen!! */
+
+/* ==========
+ENDE fundament.css
+========== */
+
+/* ==========
+TEIL 4 - Sound related stuff
+========== */
+
+.currentBeat {
+  background-color: red;
+}
+
+/* ==========
+ENDE fundament.css
+========== */

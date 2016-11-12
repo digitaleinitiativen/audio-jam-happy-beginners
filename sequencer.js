@@ -13,6 +13,8 @@ var sustainTime = 0.1;
 var decayTime = 0;
 var releaseTime = 0.1;
 
+/*  */
+
 function playOsc(frequency, waveType) {
 	var now = context.currentTime;
 	gain.gain.cancelScheduledValues(now);
@@ -34,6 +36,19 @@ function playOsc(frequency, waveType) {
 	console.log(osc.frequency.value, osc.type);
 }
 
+function loadClap() {
+	var audioURL='http://audiojam.diin.io/sounds/CP.mp3';
+	var request = new XMLHttpRequest();
+	request.open("GET",audioURL,true);
+	request.responseType='arraybuffer';
+	request.onLoad = function() {
+		var audioBuffer = null;
+		context.decodeAudioData(request.response, function(buffer){ 
+			audioBuffer = buffer;
+		});
+	}
+	request.send();
+}
 
 var sequenceTimeout;
 var tact = 1;
@@ -63,16 +78,12 @@ function sequence() {
 
 $('[data-start]').on('click', function() {
 	sequence();
-	osc.start(0);
 });
 
 $('[data-stop]').on('click', function() {
-	osc.stop();
+	gain.gain.setValueAtTime(0, context.currentTime);
 	window.clearTimeout(sequenceTimeout);
 });
 
-
-
-
-
-
+osc.start(0);
+gain.gain.setValueAtTime(0, context.currentTime);
