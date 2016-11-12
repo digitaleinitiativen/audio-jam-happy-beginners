@@ -78,8 +78,8 @@ $('[data-file]').each(function(index, element){
 
 // micro recorder
 
-var recordedBuffer;
-function record() {
+var recordedBuffer = [];
+function record(index, duration) {
 	navigator.getUserMedia({ audio: true }, function(stream) {
 		recordStream = stream;
 		console.log('recording');
@@ -89,27 +89,33 @@ function record() {
 		window.setTimeout(function() {
 			rec.stop();
 			rec.getBuffer(function(buffers) {
-			    recordedBuffer = context.createBuffer( 2, buffers[0].length, context.sampleRate );
-			    recordedBuffer.getChannelData(0).set(buffers[0]);
-			    recordedBuffer.getChannelData(1).set(buffers[1]);
-			    playRecorded();
+			    recordedBuffer[index] = context.createBuffer( 2, buffers[0].length, context.sampleRate );
+			    recordedBuffer[index].getChannelData(0).set(buffers[0]);
+			    recordedBuffer[index].getChannelData(1).set(buffers[1]);
+			    playRecorded(index);
 			});
-		}, $('[data-record-duration]').val());
+		}, duration);
 	}, function() {
 		console.log('recording error');
 	})
 }
-function playRecorded() {
+function playRecorded(index) {
 	var recordedSource = context.createBufferSource();
-    recordedSource.buffer = recordedBuffer;
+    recordedSource.buffer = recordedBuffer[index];
 
     recordedSource.connect( context.destination );
     recordedSource.start(0);	
 }
-$('[data-record-start]').on('click', function() {
-	record();
-});
 
+function initRecord(element, index) {
+	element.data('record', index);
+	element.find('[data-record-start]').on('click', function() {
+		record(index, $(element).find('[data-record-duration]').val());
+	});
+}
+$('[data-record]').each(function(index, element){
+	initRecord($(element), index);
+});
 
 //Sequencer
 
@@ -140,8 +146,10 @@ function sequence() {
 	});
 
 	// recorded track
-	if($('[data-record] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
-		playRecorded();
+	$('[data-record]').each(function(index, element) {
+		if($(element).find('[data-sample-' + tact + '-' + beat + ']').is(':checked'))
+			playRecorded($(this).data('record'));
+	});
 	
 	beat++;
 	if(beat > 4) {
@@ -160,7 +168,6 @@ $('[data-start]').on('click', function() {
 });
 
 $('[data-stop]').on('click', function() {
-	gain.gain.setValueAtTime(0, context.currentTime);
 	window.clearTimeout(sequenceTimeout);
 });
 
@@ -174,6 +181,13 @@ $('[data-add-osc-track]').on('click', function() {
 	var element = $('[data-osc]:first').clone();
 	$('[data-tracks]').append(element);
 });
+
+$('[data-add-record-track]').on('click', function() {
+	var element = $('[data-record]:first').clone();
+	$('[data-tracks]').append(element);
+	initRecord(element, $('[data-record]').length);
+});
+
 
 $('[data-clear-all]').on('click', function() {
 	$('input[type="checkbox"]').each(function(index, element) {
