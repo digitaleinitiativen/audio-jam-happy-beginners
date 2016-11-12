@@ -41,30 +41,39 @@ function playOsc(frequency, waveType) {
 	console.log(osc.frequency.value, osc.type);
 }
 
-var clapBuffer;
+var fileBuffer = [];
 
-function loadClap() {
-	var audioURL='http://audiojam.diin.io/sounds/CP.mp3';
+function loadFile(file, index) {
+	console.log(file);
+	var audioURL='http://audiojam.diin.io/sounds/' + file;
 	var request = new XMLHttpRequest();
 	request.open("GET",audioURL,true);
 	request.responseType='arraybuffer';
 	request.addEventListener('load', function() {
 		context.decodeAudioData(request.response, function(buffer){ 
-			clapBuffer = buffer;
+			fileBuffer[index] = buffer;
 			console.log('audio geladen');
 		});
-
 	});
 	request.send();
 }
-loadClap();
-
-function playClap() {
+function playFile(index) {
+	console.log(index);
 	var source = context.createBufferSource();
 	source.connect(context.destination);
-	source.buffer = clapBuffer;
+	source.buffer = fileBuffer[index];
 	source.start(0);
 }
+function initFile(element, index) {
+	element.data('file', index);
+	element.find('select').on('change', function() {
+		loadFile(this.value, index);
+	});
+	loadFile(element.find('select').val(), index);
+}
+$('[data-file]').each(function(index, element){
+	initFile($(element), index);
+});
 
 
 // micro recorder
@@ -118,9 +127,11 @@ function sequence() {
 	if($('[data-osc] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
 		playOsc($('[data-osc-freq]').val(), $('[data-osc-wavetype]').val());
 
-	// clap track
-	if($('[data-clap] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
-		playClap();
+	// file track
+	$('[data-file]').each(function(index, element) {
+		if($(element).find('[data-sample-' + tact + '-' + beat + ']').is(':checked'))
+			playFile($(this).data('file'));
+	});
 
 	// recorded track
 	if($('[data-record] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
