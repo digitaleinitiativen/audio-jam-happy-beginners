@@ -86,8 +86,8 @@ function record() {
 			    newBuffer.getChannelData(1).set(buffers[1]);
 			    recordedSource.buffer = newBuffer;
 
-			    newSource.connect( context.destination );
-			    newSource.start(0);
+			    recordedSource.connect( context.destination );
+			    recordedSource.start(0);
 			});
 		}, 1000);
 	}, function() {
