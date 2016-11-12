@@ -168,6 +168,9 @@ $('[data-start]').on('click', function() {
 });
 
 $('[data-stop]').on('click', function() {
+	tact = 1;
+	beat = 1;
+	$('.currentBeat').removeClass('currentBeat');
 	window.clearTimeout(sequenceTimeout);
 });
 

@@ -21,14 +21,35 @@ p, blockquote, pre, code,
 ul, ol, li,
 table, th, td,
 form, fieldset, legend, input, textarea {
-    padding: 0; margin: 0;
+   padding: 0;
+   margin: 0;
+   font-family: Arial;
 }
 
 body {
-    margin-top: 15px;
-    margin-left: 15px;
+   margin-top: 15px;
+   margin-left: 15px;
 }
 
+h1 {
+ font-size: 40px;
+ color: green;
+}
+
+td {
+ margin-left: 3px;
+ margin-right: 3px;
+}
+
+input {
+ margin-left: 20px;
+}
+
+input[type="button"] {
+ background-color: yellow;
+}
+
+tr {margin: 0px 20px;}
 
 
 /* ==========
@@ -38,7 +59,7 @@ TEIL 2 - Abstände restaurieren
 h2, h3, h4, h5, h6,
 p, blockquote, pre,
 ul, ol {
-    margin-bottom: 1em;
+   margin-bottom: 1em;
 }
 ul, ol { margin-left: 2em; }
 ul ul, ul ol, ol ol, ol ul { margin-bottom: 0; }
@@ -50,10 +71,6 @@ blockquote { margin: 1em 2em; }
 TEIL 3 - Allgemeine Klassen
 ========== */
 
-.clearing { clear: both; }
-
-} /* Ende @media - nicht löschen!! */
-
 /* ==========
 ENDE fundament.css
 ========== */
@@ -63,9 +80,32 @@ TEIL 4 - Sound related stuff
 ========== */
 
 .currentBeat {
-  background-color: red;
+ background-color: lightgreen;
+}
+
+.Track_settings {
+ padding-left: 3px;
+ padding-right: 3px;
+ border-style: dotted;
+ border-color: green;
+}
+
+.Ueberschrift {
+ font-size: 15pt;
+ font-weight: bold;
+}
+
+.Platz {
+ width: 97px;
+}
+
+.Platz {
+ margin-left: 100px;
 }
 
 /* ==========
 ENDE fundament.css
 ========== */
+
+
+} /* Ende @media - nicht löschen!! */
