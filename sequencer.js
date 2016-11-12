@@ -36,33 +36,51 @@ function playOsc(frequency, waveType) {
 	console.log(osc.frequency.value, osc.type);
 }
 
+var clapBuffer;
+
 function loadClap() {
 	var audioURL='http://audiojam.diin.io/sounds/CP.mp3';
 	var request = new XMLHttpRequest();
 	request.open("GET",audioURL,true);
 	request.responseType='arraybuffer';
-	request.onLoad = function() {
-		var audioBuffer = null;
+	request.addEventListener('load', function() {
 		context.decodeAudioData(request.response, function(buffer){ 
-			audioBuffer = buffer;
+			clapBuffer = buffer;
+			console.log('audio geladen');
 		});
-	}
+
+	});
 	request.send();
 }
+loadClap();
+
+function playClap() {
+	var source = context.createBufferSource();
+	source.connect(context.destination);
+	source.buffer = clapBuffer;
+	source.start(0);
+}
+
+//Sequencer
 
 var sequenceTimeout;
 var tact = 1;
 var beat = 1;
 
-//Sequencer
 function sequence() {
 	$('.currentBeat').removeClass('currentBeat');
 	$('[data-beattop-' + tact + '-' + beat + ']').addClass('currentBeat');
 
 	var bpm = $('[data-bpm]').val();
 
-	if($('[data-sample-' + tact + '-' + beat + ']').is(':checked'))
+	console.log($('[data-osc] [data-sample-' + tact + '-' + beat + ']').is(':checked'));
+	// freq track
+	if($('[data-osc] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
 		playOsc($('[data-osc-freq]').val(), $('[data-osc-wavetype]').val());
+
+	// clap track
+	if($('[data-clap] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
+		playClap();
 	
 	beat++;
 	if(beat > 4) {
@@ -87,3 +105,4 @@ $('[data-stop]').on('click', function() {
 
 osc.start(0);
 gain.gain.setValueAtTime(0, context.currentTime);
+
