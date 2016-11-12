@@ -158,6 +158,18 @@ $('[data-stop]').on('click', function() {
 	window.clearTimeout(sequenceTimeout);
 });
 
+$('[data-add-file-track]').on('click', function() {
+	var element = $('[data-file]:first').clone();
+	$('[data-tracks]').append(element);
+	initFile(element, $('[data-file]').length);
+});
+
+$('[data-clear-all]').on('click', function() {
+	$('input[type="checkbox"]').each(function(index, element) {
+		element.checked = null;
+	});
+})
+
 osc.start(0);
 gain.gain.setValueAtTime(0, context.currentTime);
 
