@@ -6,7 +6,9 @@ var gain = context.createGain();
 osc.connect(gain);
 gain.connect(context.destination);
 
-gain.gain.value = 0.5;
+osc.type = "square";
+
+var oscTypes = ["sine", "square", "sawtooth", "triangle"];
 
 var frequenceStart = 200;
 var frequenceStep = 100;
@@ -37,8 +39,11 @@ window.setInterval(function() {
 	gain.gain.linearRampToValueAtTime(0, now + attackTime + decayTime + sustainTime + releaseTime);
 
 	osc.frequency.value = frequenceCurrent;
+
+	osc.type = oscTypes[Math.floor(Math.random() * (oscTypes.length - 0.0000000001))];
+
 	frequenceCurrent += frequenceStep;
-	console.log(osc.frequency.value);
+	console.log(osc.frequency.value, osc.type);
 	if(frequenceCurrent == 1000) frequenceCurrent = frequenceStart;
 }, 1200);
 
