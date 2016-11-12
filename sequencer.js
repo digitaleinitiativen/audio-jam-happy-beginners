@@ -5,14 +5,6 @@ navigator.getUserMedia = (navigator.getUserMedia ||
 
 var context = new AudioContext();
 
-var osc = context.createOscillator();
-var gain = context.createGain();
-
-osc.connect(gain);
-gain.connect(context.destination);
-
-osc.type = "square";
-
 var attackTime = 0.1;
 var sustainTime = 0.1;
 var decayTime = 0;
@@ -21,6 +13,13 @@ var releaseTime = 0.1;
 /*  */
 
 function playOsc(frequency, waveType) {
+	console.log(frequency, waveType);
+	var osc = context.createOscillator();
+	var gain = context.createGain();
+
+	osc.connect(gain);
+	gain.connect(context.destination);
+
 	var now = context.currentTime;
 	gain.gain.cancelScheduledValues(now);
 	gain.gain.setValueAtTime(0, now);
@@ -37,6 +36,7 @@ function playOsc(frequency, waveType) {
 	osc.frequency.value = frequency;
 
 	osc.type = waveType;
+	osc.start(now);
 
 	console.log(osc.frequency.value, osc.type);
 }
@@ -124,8 +124,14 @@ function sequence() {
 	var bpm = $('[data-bpm]').val();
 
 	// freq track
-	if($('[data-osc] [data-sample-' + tact + '-' + beat + ']').is(':checked'))
-		playOsc($('[data-osc-freq]').val(), $('[data-osc-wavetype]').val());
+	$('[data-osc]').each(function(index, element) {
+		if($(element).find('[data-sample-' + tact + '-' + beat + ']').is(':checked'))
+			playOsc(
+				$(element).find('[data-osc-freq]').val(), 
+				$(element).find('[data-osc-wavetype]').val()
+			);
+
+	});
 
 	// file track
 	$('[data-file]').each(function(index, element) {
@@ -164,12 +170,13 @@ $('[data-add-file-track]').on('click', function() {
 	initFile(element, $('[data-file]').length);
 });
 
+$('[data-add-osc-track]').on('click', function() {
+	var element = $('[data-osc]:first').clone();
+	$('[data-tracks]').append(element);
+});
+
 $('[data-clear-all]').on('click', function() {
 	$('input[type="checkbox"]').each(function(index, element) {
 		element.checked = null;
 	});
-})
-
-osc.start(0);
-gain.gain.setValueAtTime(0, context.currentTime);
-
+});
